@@ -49,6 +49,7 @@ def insert_into_dynamodb(data):
     for user, user_data in data.items():
         print(user_data['date'],user,user_data['pull_requests'])
         table.put_item(Item={
+            'primarykey': str(user_data['date'])+"_"+user
             'Date': user_data['date'],
             'User': user,
             'Pull_Requests': user_data['pull_requests']
