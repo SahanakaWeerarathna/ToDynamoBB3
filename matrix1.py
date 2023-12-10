@@ -46,24 +46,23 @@ def insert_into_dynamodb(data):
     table = dynamodb.Table(dynamodb_table_name)
 
     for user, user_data in data.items():
-        print(user_data['date'],user,user_data['event_count'])
+        print(str(user_data['date'])+"_"+user,user_data['date'],user,user_data['event_count'])
 
         table.put_item(Item={
+            'primarykey': str(user_data['date'])+"_"+user
             'Date': user_data['date'],
             'User': user,
             'Event_Count': user_data['event_count']
         })
 
 
-# Main script
-def maindefm1():
-    # Fetch GitHub events for the Apache Hadoop repository
-    repository_events = get_repository_events()
 
-    if repository_events:
-        # Count events for each user
-        user_events_count = count_events_for_users(repository_events)
+repository_events = get_repository_events()
 
-        # Insert data into DynamoDB
-        insert_into_dynamodb(user_events_count)
-        print("Data inserted into DynamoDB successfully.")
+if repository_events:
+    # Count events for each user
+    user_events_count = count_events_for_users(repository_events)
+
+    # Insert data into DynamoDB
+    insert_into_dynamodb(user_events_count)
+    print("Data inserted into DynamoDB successfully.")
