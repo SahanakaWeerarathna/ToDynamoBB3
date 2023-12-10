@@ -1,4 +1,4 @@
-# Date , User , Total pull requests
+# Date , User , Branches created
 
 import requests
 import boto3
@@ -10,7 +10,7 @@ repository_name = "hadoop"
 github_api_url = f"https://api.github.com/repos/{repository_owner}/{repository_name}/events"
 
 # AWS DynamoDB table details
-dynamodb_table_name = "MATRIX_2"
+dynamodb_table_name = "MATRIX_3"
 aws_region = "eu-north-1"
 aws_access_key_id = "AKIAXCWMEHTAR4FWNARJ"
 aws_secret_access_key = "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"
@@ -25,19 +25,19 @@ def get_repository_events():
         return None
 
 def process_events(events):
-    user_pull_requests = {}
+    user_branches_created = {}
 
     for event in events:
         actor_login = event['actor']['login']
         event_date = datetime.strptime(event['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")
 
-        if event['type'] == 'PullRequestEvent':
-            if actor_login in user_pull_requests:
-                user_pull_requests[actor_login]['pull_requests'] += 1
+        if event['type'] == 'CreateEvent' and event['payload']['ref_type'] == 'branch':
+            if actor_login in user_branches_created:
+                user_branches_created[actor_login]['branches_created'] += 1
             else:
-                user_pull_requests[actor_login] = {'date': event_date, 'pull_requests': 1}
+                user_branches_created[actor_login] = {'date': event_date, 'branches_created': 1}
 
-    return user_pull_requests
+    return user_branches_created
 
 def insert_into_dynamodb(data):
     dynamodb = boto3.resource('dynamodb', region_name=aws_region,
@@ -47,23 +47,23 @@ def insert_into_dynamodb(data):
     table = dynamodb.Table(dynamodb_table_name)
 
     for user, user_data in data.items():
-        print(user_data['date'],user,user_data['pull_requests'])
+        print(user_data['date'],user,user_data['branches_created'])
         table.put_item(Item={
-            'primarykey': str(user_data['date'])+"_"+user
+            'primarykey': str(user_data['date'])+"_"+user,
             'Date': user_data['date'],
             'User': user,
-            'Pull_Requests': user_data['pull_requests']
+            'Branches_Created': user_data['branches_created']
         })
 
 # Main script
-def maindefm2():
+def maindefm3():
     # Fetch GitHub events for the Apache Hadoop repository
     repository_events = get_repository_events()
 
     if repository_events:
-        # Process events and count pull requests for each user
-        user_pull_requests = process_events(repository_events)
+        # Process events and count branches created for each user
+        user_branches_created = process_events(repository_events)
 
         # Insert data into DynamoDB
-        insert_into_dynamodb(user_pull_requests)
-        print("Data inserted into DynamoDB successfully.")
+        insert_into_dynamodb(user_branches_created)
+
