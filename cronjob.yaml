@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob
+spec:
+  schedule: "	0 0 * * *"  # Cron schedule (every day)
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob
+            image:  gcr.io/todynamobb/todynamobb_image:v1
+          restartPolicy: OnFailure
