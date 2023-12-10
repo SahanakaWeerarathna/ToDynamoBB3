@@ -43,7 +43,7 @@ jobs:
 
       - name: Publish Docker Image to GCR
         run: |-
-          docker push gcr.io/todynamobb/todynamobb_imagee:v1
+          docker push gcr.io/todynamobb/todynamobb_image:v1
 
 #      - name: Set up Kustomize
 #        run: |-
