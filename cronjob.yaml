@@ -10,5 +10,5 @@ spec:
         spec:
           containers:
           - name: cronjob
-            image:  gcr.io/todynamobb/todynamobb_image:v1
+            image:  gcr.io/cloudcoursework-409406/todynamobb_image2:v1
           restartPolicy: OnFailure
