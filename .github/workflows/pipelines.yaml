@@ -6,10 +6,10 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.TODYNAMOBB_PROJECT }}
-  MY_CLUSTER: todynamobb
+  MY_CLUSTER: mycluster
   MY_ZONE: us-central1
-  DEPLOYMENT_NAME: todynamobb
-  IMAGE: todynamobb_image
+  DEPLOYMENT_NAME: todynamobb2
+  IMAGE: todynamobb_image2
   TAG: v1
 
 
@@ -40,11 +40,11 @@ jobs:
       # Build the Docker image
       - name: Build Docker Image GCR
         run: |-
-          docker build --tag gcr.io/todynamobb/todynamobb_image:v1 .
+          docker build --tag gcr.io/$PROJECT_ID/todynamobb_image2:v1 .
 
       - name: Publish Docker Image to GCR
         run: |-
-          docker push gcr.io/todynamobb/todynamobb_image:v1
+          docker push gcr.io/$PROJECT_ID/todynamobb_image2:v1
 
 #      - name: Set up Kustomize
 #        run: |-
